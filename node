@@ -39,6 +39,10 @@
 # node_user and node_group may be used to drop node's root privileges after
 # binding to ports.
 
+# PROVIDE: node
+# REQUIRE: LOGIN
+# KEYWORD: shutdown
+
 . /etc/rc.subr
 
 name="node"
