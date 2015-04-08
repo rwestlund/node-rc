@@ -40,7 +40,7 @@
 # binding to ports.
 
 # PROVIDE: node
-# REQUIRE: LOGIN
+# REQUIRE: LOGIN mongod
 # KEYWORD: shutdown
 
 . /etc/rc.subr

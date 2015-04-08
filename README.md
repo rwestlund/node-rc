@@ -29,3 +29,6 @@ node_group    Passed to noded process as process.env.GROUP. Defaults to "www".
 
 `node_user` and `node_group` may be used to drop node's root privileges after
 binding to ports.
+
+## Notes
+If you do not use monngdb, then remove the mongod dependency from the script.
