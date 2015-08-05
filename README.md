@@ -4,8 +4,8 @@ A FreeBSD rc.d script for node.js applications using forever.js.
 
 ## Purpose
 
-The goal is to have a node project be a proper system service, starting at boot
-and ready to drop into a jail.
+The goal is to have a node project be a proper system service, starting at
+boot, restarting upon failure, and ready to drop into a jail.
 
 ## Installation
 
@@ -31,4 +31,4 @@ node_group    Passed to noded process as process.env.GROUP. Defaults to "www".
 binding to ports.
 
 ## Notes
-If you do not use monngdb, then remove the mongod dependency from the script.
+If you do not use mongdb, then remove the mongod dependency from the script.

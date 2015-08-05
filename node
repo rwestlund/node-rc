@@ -82,8 +82,8 @@ node_prestart()
 node_start()
 {
     # pass USER and GROUP to node so it can drop privs
-    USER="${node_user}" \
-    GROUP="${node_group}" \
+    NEW_USER="${node_user}" \
+    NEW_GROUP="${node_group}" \
     ${forever} start -a -l /var/log/forever.log -o ${node_logdir}/node.log \
         -e ${node_logdir}/node_err.log --minUptime 3000 --pidFile ${pidfile} \
         --workingDir ${node_dir} ${node_dir}/bin/www
