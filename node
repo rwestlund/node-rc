@@ -35,9 +35,14 @@
 # node_logdir   The directory for logfiles. Defaults to ${node_dir}/logs.
 # node_user     Passed to noded process as process.env.USER. Defaults to "www".
 # node_group    Passed to noded process as process.env.GROUP. Defaults to "www".
-
-# node_user and node_group may be used to drop node's root privileges after
-# binding to ports.
+#               node_user and node_group may be used to drop node's root
+#               privileges after binding to ports.
+# node_app      Application main script. Defaults to "/bin/www" (relative
+#               to node_user's home
+# node_forever  forever binary file path. Defaults to "/usr/local/bin/forever".
+# node_local_forever    use local forever binary
+#               (ie. node_user's home/node_modules/.bin/forever)
+# node_forever_log      forever log file. Defaults to /var/log/forever.log.
 
 # PROVIDE: node
 # REQUIRE: LOGIN mongod
@@ -56,8 +61,6 @@ stop_cmd="${name}_stop"
 command="/usr/local/bin/${name}"
 pidfile="/var/run/${name}.pid"
 
-# process manager
-forever="/usr/local/bin/forever"
 # forever needs a path for each command
 PATH=/sbin:/bin:/usr/sbin:/usr/bin:/usr/games:/usr/local/sbin:/usr/local/bin:/root/bin
 
@@ -68,10 +71,23 @@ load_rc_config $name
 : ${node_logdir:="${node_dir}/logs"}
 : ${node_user:="www"}
 : ${node_group:="www"}
+: ${node_app:="/bin/www"}
+: ${node_forever:="/usr/local/bin/forever"}
+: ${node_local_forever:="no"}
+: ${node_forever_log:="/var/log/forever.log"}
+
+case ${node_local_forever} in
+    [Yy][Ee][Ss])
+        node_forever="/home/${node_user}/node_modules/.bin/forever"
+        ;;
+    *)
+        ;;
+esac
+
 
 # make sure we're pointing to the right place
 required_dirs="${node_dir}"
-required_files="${node_dir}/bin/www"
+required_files="${node_dir}/${node_app}"
 
 # any other checks go here
 node_prestart()
@@ -84,15 +100,15 @@ node_start()
     # pass USER and GROUP to node so it can drop privs
     NEW_USER="${node_user}" \
     NEW_GROUP="${node_group}" \
-    ${forever} start -a -l /var/log/forever.log -o ${node_logdir}/node.log \
+    ${node_forever} start -a -l ${node_forever_log} -o ${node_logdir}/node.log \
         -e ${node_logdir}/node_err.log --minUptime 3000 --pidFile ${pidfile} \
-        --workingDir ${node_dir} ${node_dir}/bin/www
+        --workingDir ${node_dir} ${node_dir}/${node_app}
 }
 
 node_stop()
 {
     # kill node nicely -- node should catch this signal gracefully
-    ${forever} stop --killSignal SIGTERM `cat ${pidfile}`
+    ${node_forever} stop --killSignal SIGTERM `cat ${pidfile}`
 }
 
 run_rc_command "$1"
